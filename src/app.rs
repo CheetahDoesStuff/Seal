@@ -28,7 +28,7 @@ impl App {
     }
 
     pub fn get_output(&mut self) -> &str {
-        &self.output
+        &self.input
     }
 }
 

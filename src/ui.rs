@@ -1,4 +1,3 @@
-use color_eyre::owo_colors::style;
 use ratatui::{Frame, layout::{Alignment, Constraint::{self, Fill}, Layout}, style::{Color, Style, Styled}, widgets::{Block, BorderType, Borders, Paragraph}};
 use ratatui_textarea::TextArea;
 
@@ -27,6 +26,18 @@ pub fn render(app: &mut App, regex_input: &mut TextArea, input: &mut TextArea, f
         Constraint::Percentage(50),
         Fill(1)
     ]).split(parent_chunks[1]);
+
+    let output_block = Block::default()
+                    .title(" Output - Highlight ")
+                    .title_alignment(Alignment::Center)
+                    .borders(Borders::ALL)
+                    .border_style(Style::default())
+                    .border_type(BorderType::Rounded);
+
+    let output_content = Paragraph::new(app.get_output())
+                    .block(output_block);
+
+    frame.render_widget(output_content, inputs_output_chunks[1]);
 
     let input_chunks = Layout::vertical([
         Constraint::Length(3),

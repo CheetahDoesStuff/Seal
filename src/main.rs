@@ -34,6 +34,7 @@ fn main() -> Result<()> {
                         };
                     }
                     (KeyCode::Char('e'), KeyModifiers::CONTROL) => { app.quit(); }
+                    (KeyCode::Char('r'), KeyModifiers::CONTROL) => { app.quit(); }
                     (KeyCode::Char('C'), KeyModifiers::CONTROL | KeyModifiers::SHIFT) |
                     (KeyCode::Char('c'), KeyModifiers::CONTROL) => {
                         tui.focused_mut().copy();
@@ -49,6 +50,7 @@ fn main() -> Result<()> {
                     (KeyCode::Backspace, _) => { tui.focused_mut().delete_char(); }
                     (KeyCode::Delete, _) => { tui.focused_mut().delete_next_char(); }
                     (KeyCode::Char(c), _) => { tui.focused_mut().insert_char(c); }
+                    (KeyCode::Enter, _) => { if tui.focus == Focus::Input { tui.focused_mut().insert_newline(); } }
                     _ => {}
                 }
 

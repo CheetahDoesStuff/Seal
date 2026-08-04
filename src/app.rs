@@ -11,20 +11,23 @@ pub struct App {
 }
 
 impl App {
-    pub fn run(&mut self, terminal: &mut DefaultTerminal) -> io::Result<()> {
-        while !self.exit {
-            terminal.draw(|frame| self.draw(frame))?;
-            self.handle_events()?;
-        }
-
-        Ok(())
+    pub fn new() -> Self {
+        App::default()
     }
 
-    fn draw(&self, frame: &mut Frame) {
-        todo!()
+    pub fn quit(&mut self) {
+        self.exit = true;
     }
 
-    fn handle_events(&mut self) -> io::Result<()> {
-        todo!()
+    pub fn update_regex(&mut self, regex: &str) {
+        self.regex = regex.to_string()
+    }
+
+    pub fn update_input(&mut self, input: &str) {
+        self.input = input.to_string()
+    }
+
+    pub fn get_output(&mut self) -> &str {
+        &self.output
     }
 }

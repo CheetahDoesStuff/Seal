@@ -3,13 +3,15 @@ pub struct App {
     regex: String,
     input: String,
     output: String,
-    exit: bool,
+    pub exit: bool,
 }
 
 impl App {
     pub fn new() -> Self {
         App::default()
     }
+
+    pub fn tick(&self) {}
 
     pub fn quit(&mut self) {
         self.exit = true;
@@ -53,5 +55,12 @@ mod tests {
         let mut app = App::default();
         app.output = "some output".to_string();
         assert_eq!(app.get_output(), "some output");
+    }
+
+    #[test]
+    fn test_app_quit() {
+        let mut app = App::default();
+        app.quit();
+        assert_eq!(app.exit, true);
     }
 }

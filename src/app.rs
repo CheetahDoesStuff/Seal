@@ -1,7 +1,8 @@
 use std::io;
 
-use ratatui::DefaultTerminal;
+use ratatui::{DefaultTerminal, Frame};
 
+#[derive(Debug, Default)]
 pub struct App {
     regex: String,
     input: String,
@@ -10,11 +11,20 @@ pub struct App {
 }
 
 impl App {
-    fn run(&mut self, terminal: &mut DefaultTerminal) -> io::Result<()> {
+    pub fn run(&mut self, terminal: &mut DefaultTerminal) -> io::Result<()> {
         while !self.exit {
-
+            terminal.draw(|frame| self.draw(frame))?;
+            self.handle_events()?;
         }
-        
+
         Ok(())
+    }
+
+    fn draw(&self, frame: &mut Frame) {
+        todo!()
+    }
+
+    fn handle_events(&mut self) -> io::Result<()> {
+        todo!()
     }
 }

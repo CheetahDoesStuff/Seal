@@ -1,7 +1,3 @@
-use std::io;
-
-use ratatui::{DefaultTerminal, Frame};
-
 #[derive(Debug, Default)]
 pub struct App {
     regex: String,
@@ -29,5 +25,33 @@ impl App {
 
     pub fn get_output(&mut self) -> &str {
         &self.output
+    }
+}
+
+// --------------------- Tests --------------------- //
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_app_set_regex() {
+        let mut app = App::default();
+        app.update_regex("some regex");
+        assert_eq!(app.regex, "some regex");
+    }
+
+    #[test]
+    fn test_app_set_input() {
+        let mut app = App::default();
+        app.update_input("some input");
+        assert_eq!(app.input, "some input");
+    }
+
+    #[test]
+    fn test_app_get_output() {
+        let mut app = App::default();
+        app.output = "some output".to_string();
+        assert_eq!(app.get_output(), "some output");
     }
 }

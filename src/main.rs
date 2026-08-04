@@ -1,6 +1,5 @@
 use color_eyre::Result;
 use crossterm::event::{KeyCode, KeyModifiers, MouseButton, MouseEventKind};
-use crossterm::event::Event as CrosstermEvent;
 use ratatui::layout::Constraint::{self, Fill};
 use ratatui::layout::Layout;
 use ratatui::widgets::{Block, Borders};
@@ -34,6 +33,7 @@ fn main() -> Result<()> {
                             Focus::Input => Focus::Regex,
                         };
                     }
+                    (KeyCode::Char('e'), KeyModifiers::CONTROL) => { app.quit(); }
                     (KeyCode::Char('C'), KeyModifiers::CONTROL | KeyModifiers::SHIFT) |
                     (KeyCode::Char('c'), KeyModifiers::CONTROL) => {
                         tui.focused_mut().copy();

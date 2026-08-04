@@ -1,4 +1,5 @@
-use ratatui::{Frame, layout::{Alignment, Constraint::{self, Fill}, Layout}, style::{Color, Style}, widgets::{Block, BorderType, Borders, Paragraph}};
+use color_eyre::owo_colors::style;
+use ratatui::{Frame, layout::{Alignment, Constraint::{self, Fill}, Layout}, style::{Color, Style, Styled}, widgets::{Block, BorderType, Borders, Paragraph}};
 use ratatui_textarea::TextArea;
 
 use crate::{app::App, tui::Focus};
@@ -13,11 +14,11 @@ pub fn render(app: &mut App, regex_input: &mut TextArea, input: &mut TextArea, f
                     .title(" Seal - Regex Editor ")
                     .title_alignment(Alignment::Center)
                     .borders(Borders::ALL)
+                    .border_style(Style::default().fg(Color::Cyan))
                     .border_type(BorderType::Rounded);
     
-    let top_content = Paragraph::new(format!("This is a pretty cool test! output: {}", app.get_output()))
+    let top_content = Paragraph::new(format!("<CONTROL-e> Exit | <TAB> Change input focus | <CONTROL-r> Switch output type"))
                     .block(top_block)
-                    .style(Style::default().fg(Color::Cyan))
                     .alignment(Alignment::Center);
 
     frame.render_widget(top_content, parent_chunks[0]);
@@ -32,19 +33,24 @@ pub fn render(app: &mut App, regex_input: &mut TextArea, input: &mut TextArea, f
         Fill(1)
     ]).split(inputs_output_chunks[0]);
 
+    let focused_style = Style::default().fg(Color::Cyan);
+    let unfocused_style = Style::default();
+
     let regex_block = Block::default()
-                    .title("Regex")
+                    .title(" Regex ")
                     .title_alignment(Alignment::Center)
                     .borders(Borders::ALL)
-                    .border_type(BorderType::Rounded);
+                    .border_type(BorderType::Rounded)
+                    .border_style(if focus == Focus::Regex { focused_style } else { unfocused_style });
     
     regex_input.set_block(regex_block);
 
     let input_block = Block::default()
-                    .title("Input text")
+                    .title(" Input text ")
                     .title_alignment(Alignment::Center)
                     .borders(Borders::ALL)
-                    .border_type(BorderType::Rounded);
+                    .border_type(BorderType::Rounded)
+                    .border_style(if focus == Focus::Input { focused_style } else { unfocused_style });
     
     input.set_block(input_block);
 

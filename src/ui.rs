@@ -1,9 +1,9 @@
 use ratatui::{Frame, layout::{Alignment, Constraint::{self, Fill}, Layout}, style::{Color, Style}, widgets::{Block, BorderType, Borders, Paragraph}};
 use ratatui_textarea::TextArea;
 
-use crate::app::App;
+use crate::{app::App, tui::Focus};
 
-pub fn render(app: &mut App, frame: &mut Frame) {
+pub fn render(app: &mut App, regex_input: &mut TextArea, input: &mut TextArea, focus: Focus, frame: &mut Frame) {
     let parent_chunks = Layout::vertical([
         Constraint::Length(3),
         Fill(1)
@@ -38,10 +38,16 @@ pub fn render(app: &mut App, frame: &mut Frame) {
                     .borders(Borders::ALL)
                     .border_type(BorderType::Rounded);
     
-    let mut regex_content = TextArea::default();
-    regex_content.set_selection_style(Style::default().fg(Color::DarkGray).bg(Color::Gray));
-    regex_content.set_cursor_line_style(Style::default());
-    regex_content.set_block(regex_block);
+    regex_input.set_block(regex_block);
+
+    let input_block = Block::default()
+                    .title("Input text")
+                    .title_alignment(Alignment::Center)
+                    .borders(Borders::ALL)
+                    .border_type(BorderType::Rounded);
     
-    frame.render_widget(&regex_content, input_chunks[0]);
+    input.set_block(input_block);
+
+    frame.render_widget(&*regex_input, input_chunks[0]);
+    frame.render_widget(&*input, input_chunks[1]);
 }

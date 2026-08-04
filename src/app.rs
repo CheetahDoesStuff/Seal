@@ -1,3 +1,5 @@
+use ratatui_textarea::TextArea;
+
 #[derive(Debug, Default)]
 pub struct App {
     regex: String,

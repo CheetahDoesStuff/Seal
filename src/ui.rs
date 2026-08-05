@@ -1,4 +1,4 @@
-use ratatui::{Frame, layout::{Alignment, Constraint::{self, Fill}, Layout}, style::{Color, Style, Styled}, widgets::{Block, BorderType, Borders, Paragraph}};
+use ratatui::{Frame, layout::{Alignment, Constraint::{self, Fill}, Layout}, style::{Color, Style, Styled}, widgets::{Block, BorderType, Borders, Paragraph, Wrap}};
 use ratatui_textarea::TextArea;
 
 use crate::{app::App, tui::Focus};
@@ -27,15 +27,22 @@ pub fn render(app: &mut App, regex_input: &mut TextArea, input: &mut TextArea, f
         Fill(1)
     ]).split(parent_chunks[1]);
 
+    let output_type_string = {
+        match app.output_type {
+            crate::app::OutputType::Highlight => "Highlight",
+            crate::app::OutputType::Extract => "Extract",
+            crate::app::OutputType::ExtractRaw => "Extract (Raw)",
+        }
+    };
     let output_block = Block::default()
-                    .title(" Output - Highlight ")
+                    .title(format!(" Output - {} ", output_type_string))
                     .title_alignment(Alignment::Center)
                     .borders(Borders::ALL)
                     .border_style(Style::default())
                     .border_type(BorderType::Rounded);
 
     let output_content = Paragraph::new(app.get_output())
-                    .block(output_block);
+                    .block(output_block).wrap(Wrap { trim: true });
 
     frame.render_widget(output_content, inputs_output_chunks[1]);
 

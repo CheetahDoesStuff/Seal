@@ -3,7 +3,7 @@ use std::{io, panic};
 use crossterm::{event::EnableMouseCapture, execute, terminal::{self, EnterAlternateScreen, LeaveAlternateScreen}};
 use color_eyre::Result;
 use ratatui::{style::{Color, Style}};
-use ratatui_textarea::TextArea;
+use ratatui_textarea::{TextArea, WrapMode};
 
 use crate::{app::App, events::EventHandler, ui};
 
@@ -38,6 +38,7 @@ impl<'a> Tui<'a> {
         let mut input = TextArea::default();
         input.set_selection_style(selection_style);
         input.set_cursor_line_style(ratatui::style::Style::default());
+        input.set_wrap_mode(WrapMode::WordOrGlyph);
 
         Self { terminal, events, regex_input, input, focus: Focus::Regex, mouse_dragging: false }
     }

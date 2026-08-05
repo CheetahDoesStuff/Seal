@@ -22,6 +22,7 @@ fn main() -> Result<()> {
     let events = EventHandler::new(250);
     let mut tui = Tui::new(terminal, events);
     let _ = tui.enter();
+
     while !app.exit {
         let _ = tui.draw(&mut app);
         match tui.events.next()? {
@@ -34,7 +35,7 @@ fn main() -> Result<()> {
                         };
                     }
                     (KeyCode::Char('e'), KeyModifiers::CONTROL) => { app.quit(); }
-                    (KeyCode::Char('r'), KeyModifiers::CONTROL) => { app.quit(); }
+                    (KeyCode::Char('r'), KeyModifiers::CONTROL) => { app.switch_output_type(); }
                     (KeyCode::Char('C'), KeyModifiers::CONTROL | KeyModifiers::SHIFT) |
                     (KeyCode::Char('c'), KeyModifiers::CONTROL) => {
                         tui.focused_mut().copy();

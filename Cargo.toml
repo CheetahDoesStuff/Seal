@@ -3,6 +3,15 @@ name = "seal"
 version = "0.1.0"
 edition = "2024"
 
+authors = ["CheetahDoesStuff"]
+description = "A tiny CLI for testing and writing REGEX queries"
+license = "MIT"
+readme = "https://github.com/CheetahDoesStuff/Seal/blob/main/README.md"
+repository = "https://github.com/CheetahDoesStuff/Seal/"
+homepage = "https://github.com/CheetahDoesStuff/Seal/"
+keywords = ["regex", "tui", "terminal"]
+categories = ["tui", "regex"]
+
 [dependencies]
 color-eyre = "0.6.5"
 crossterm = "0.29.0"

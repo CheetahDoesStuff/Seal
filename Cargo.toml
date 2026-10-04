@@ -1,5 +1,5 @@
 [package]
-name = "seal-tui"
+name = "ch-seal-tui"
 version = "0.1.0"
 edition = "2024"
 

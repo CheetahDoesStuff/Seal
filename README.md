@@ -1,5 +1,6 @@
 # Seal
 **A simple and intuitive TUI for testing out and writing REGEX queries.**
+![image](https://github.com/CheetahDoesStuff/Seal/blob/main/readme/Screenshot%202026-10-04%20at%2013.27.12.png)
 
 ## Features
 - 3 types of output (extract, extract-raw, highlight)

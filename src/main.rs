@@ -22,9 +22,11 @@ fn main() -> Result<()> {
     let events = EventHandler::new(250);
     let mut tui = Tui::new(terminal, events);
     let _ = tui.enter();
+    let mut scroll = 0;
 
     while !app.exit {
         let _ = tui.draw(&mut app);
+        scroll = 0;
         match tui.events.next()? {
             Event::Key(key) => {
                 match (key.code, key.modifiers) {
@@ -34,8 +36,11 @@ fn main() -> Result<()> {
                             Focus::Input => Focus::Regex,
                         };
                     }
+                    
                     (KeyCode::Char('e'), KeyModifiers::CONTROL) => { app.quit(); }
                     (KeyCode::Char('r'), KeyModifiers::CONTROL) => { app.switch_output_type(); }
+                    (KeyCode::Up, KeyModifiers::SHIFT) => { scroll -= 1; }
+                    (KeyCode::Down, KeyModifiers::SHIFT) => { scroll += 1; }
                     (KeyCode::Char('C'), KeyModifiers::CONTROL | KeyModifiers::SHIFT) |
                     (KeyCode::Char('c'), KeyModifiers::CONTROL) => {
                         tui.focused_mut().copy();
@@ -44,8 +49,8 @@ fn main() -> Result<()> {
                     (KeyCode::Char('v'), KeyModifiers::CONTROL) => {
                         tui.focused_mut().paste();
                     }
-                    (KeyCode::Up, _) => tui.focused_mut().move_cursor(CursorMove::Up),
-                    (KeyCode::Down, _) => tui.focused_mut().move_cursor(CursorMove::Down),
+                    (KeyCode::Up, mods) if !mods.contains(KeyModifiers::SHIFT) => tui.focused_mut().move_cursor(CursorMove::Up),
+                    (KeyCode::Down, mods) if !mods.contains(KeyModifiers::SHIFT) => tui.focused_mut().move_cursor(CursorMove::Down),
                     (KeyCode::Left, _) => tui.focused_mut().move_cursor(CursorMove::Back),
                     (KeyCode::Right, _) => tui.focused_mut().move_cursor(CursorMove::Forward),
                     (KeyCode::Backspace, _) => { tui.focused_mut().delete_char(); }

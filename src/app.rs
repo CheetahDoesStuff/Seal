@@ -1,5 +1,5 @@
 use fancy_regex::Regex;
-use ratatui::text::Line;
+use ratatui::{style::{Color, Style, Styled}, text::{Line, Span, Text}};
 
 #[derive(Default, Debug, PartialEq)]
 pub enum OutputType {
@@ -21,15 +21,15 @@ impl OutputType {
 }
 
 #[derive(Debug, Default)]
-pub struct App<'a> {
+pub struct App {
     regex: String,
     input: String,
-    output: Line<'a>,
+    output: Text<'static>,
     pub output_type: OutputType,
     pub exit: bool,
 }
 
-impl<'a> App<'a> {
+impl App {
     pub fn new() -> Self {
         App::default()
     }
@@ -48,32 +48,114 @@ impl<'a> App<'a> {
         self.input = input.to_string()
     }
 
-    pub fn get_output(&mut self) -> Line<'a> {
-        self.output = match self.output_type {
+    pub fn get_output(&mut self) -> Text<'_> {
+        let output = match self.output_type {
             OutputType::Highlight => self.regex_highlight(),
-            OutputType::Extract => Line::from("Todo D:"),
-            OutputType::ExtractRaw => Line::from("Todo D:"),
-        }
-        self.output.clone()
+            OutputType::Extract => self.regex_extract(),
+            OutputType::ExtractRaw => self.regex_extract_raw(),
+        };
+        self.output = output.clone();
+        return output
     }
 
     pub fn switch_output_type(&mut self) {
         self.output_type = self.output_type.next();
     }
 
-    pub fn get_output_highlight(&mut self) -> Line<'a> {
-        return "test".into();
-    }
+    fn regex_highlight(&self) -> Text<'static> {
+        let re = Regex::new(&self.regex).expect("Invalid regex pattern");
+        let input = &self.input;
 
-    fn regex_highlight(&self) -> Line<'a> {
-        let re = Regex::new(&self.input).expect("Invalid regex pattern");
-        let mut spans = Vec::new();
+        let mut lines: Vec<Line<'static>> = Vec::new();
+        let mut current_line_spans: Vec<Span<'static>> = Vec::new();
+        
         let mut current_idx = 0;
         let mut match_count = 0;
 
+        let mut push_chunk = |text: &str, style: Style| {
+            let mut lines_iter = text.split('\n').peekable();
+            while let Some(line_str) = lines_iter.next() {
+                if !line_str.is_empty() {
+                    current_line_spans.push(Span::styled(line_str.to_string(), style));
+                }
+                if lines_iter.peek().is_some() {
+                    lines.push(Line::from(std::mem::take(&mut current_line_spans)));
+                }
+            }
+        };
+
+        for mat_res in re.find_iter(input) {
+            if let Ok(mat) = mat_res {
+                let start = mat.start();
+                let end = mat.end();
+                if start > current_idx {
+                    push_chunk(&input[current_idx..start], Style::default());
+                }
+                let style = if match_count % 2 == 0 {
+                    Style::default().bg(Color::Cyan).fg(Color::Black)
+                } else {
+                    Style::default().bg(Color::LightBlue).fg(Color::Black)
+                };
+
+                push_chunk(&input[start..end], style);
+                current_idx = end;
+                match_count += 1;
+            }
+        }
+
+        if current_idx < input.len() {
+            push_chunk(&input[current_idx..], Style::default());
+        }
+
+        lines.push(Line::from(current_line_spans));
+        Text::from(lines)
+    }
 
 
-        return Line::from(spans)
+    fn regex_extract(&self) -> Text<'static> {
+        let re = Regex::new(&self.regex).expect("Invalid regex pattern");
+        let mut lines: Vec<Line<'static>> = Vec::new();
+        let mut match_count = 0;
+
+        for mat_res in re.find_iter(&self.input) {
+            if let Ok(mat) = mat_res {
+                let style = if match_count % 2 == 0 {
+                    Style::default().bg(Color::Cyan).fg(Color::Black)
+                } else {
+                    Style::default().bg(Color::LightBlue).fg(Color::Black)
+                };
+
+                let styled_num = format!("{}.", match_count + 1).set_style(style);
+                let styled_match = format!(" {}", mat.as_str());
+                let line = Line::from(vec![styled_num, styled_match.into()]);
+                lines.push(line);
+                match_count += 1;
+            }
+        }
+
+        return Text::from(lines)
+    }
+
+    fn regex_extract_raw(&self) -> Text<'static> {
+        let re = Regex::new(&self.regex).expect("Invalid regex pattern");
+        let mut spans: Vec<Span<'static>> = Vec::new();
+        let mut match_count = 0;
+
+        for mat_res in re.find_iter(&self.input) {
+            if let Ok(mat) = mat_res {
+                let style = if match_count % 2 == 0 {
+                    Style::default().bg(Color::Cyan).fg(Color::Black)
+                } else {
+                    Style::default().bg(Color::LightBlue).fg(Color::Black)
+                };
+
+                let styled_match = format!("{}", mat.as_str()).set_style(style);
+                spans.push(styled_match);
+                match_count += 1;
+            }
+        }
+
+        return Text::from(Line::from(spans))
     }
 }
 

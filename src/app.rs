@@ -62,8 +62,12 @@ impl App {
         self.output_type = self.output_type.next();
     }
 
-    fn regex_highlight(&self) -> Text<'static> {
-        let re = Regex::new(&self.regex).expect("Invalid regex pattern");
+    fn regex_highlight(&self) -> Text<'static> {       
+        let Ok(re) = Regex::new(&self.regex) else {
+            let err_text = Text::from("Invalid / incomplete regex expression!");
+            let err_text = err_text.set_style(Style::default().fg(Color::Red)); 
+            return err_text;
+        };
         let input = &self.input;
 
         let mut lines: Vec<Line<'static>> = Vec::new();
@@ -113,7 +117,12 @@ impl App {
 
 
     fn regex_extract(&self) -> Text<'static> {
-        let re = Regex::new(&self.regex).expect("Invalid regex pattern");
+        let Ok(re) = Regex::new(&self.regex) else {
+            let err_text = Text::from("Invalid / incomplete regex expression!");
+            let err_text = err_text.set_style(Style::default().fg(Color::Red)); 
+            return err_text;
+        };
+
         let mut lines: Vec<Line<'static>> = Vec::new();
         let mut match_count = 0;
 
@@ -137,7 +146,11 @@ impl App {
     }
 
     fn regex_extract_raw(&self) -> Text<'static> {
-        let re = Regex::new(&self.regex).expect("Invalid regex pattern");
+        let Ok(re) = Regex::new(&self.regex) else {
+            let err_text = Text::from("Invalid / incomplete regex expression!");
+            let err_text = err_text.set_style(Style::default().fg(Color::Red)); 
+            return err_text;
+        };
         let mut spans: Vec<Span<'static>> = Vec::new();
         let mut match_count = 0;
 
